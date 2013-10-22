@@ -345,7 +345,7 @@ HeaderTable.prototype.tryAppendEntry = function(
   var targetSize = Math.max(0, this.maxSize_ - sizeDelta);
   while (this.entries_.length > 0 && (this.size_ > targetSize)) {
     onReferenceSetRemovalFn(this.entries_.length - 1);
-    var evicted = this.entries_.shift();
+    var evicted = this.entries_.pop();
     this.size_ -= evicted.size();
   }
   if (sizeDelta <= this.maxSize_) {
