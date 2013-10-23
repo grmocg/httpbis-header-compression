@@ -252,19 +252,19 @@ function doDecode() {
     alert("Not decoding because the intermediate had an error in it!");
     return;
   }
-  try {
+  //try {
     formattedOpcodes =
       headerDecoder.decodeHeaderSet(encodedHeaderSet, function(name, value) {
         deserializedHeaderSet.push([ name, value ]);
     });
-  } catch (e) {
-    error = {
-      name: e.name,
-      message: e.message,
-      stack: e.stack
-    };
-    alert(JSON.stringify(error));
-  }
+  //} catch (e) {
+  //  error = {
+  //    name: e.name,
+  //    message: e.message,
+  //    stack: e.stack
+  //  };
+  //  alert(JSON.stringify(error));
+  //}
 
   decoderContextTextarea.textContent =
     JSON.stringify(headerDecoder.encodingContext_, null, '  ');

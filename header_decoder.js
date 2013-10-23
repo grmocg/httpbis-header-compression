@@ -217,7 +217,8 @@ Decoder.prototype.processNextHeaderRepresentation = function() {
   switch (opcode) {
     case OPCODES.INDEX_OPCODE:
       var index = this.decodeNextInteger_(7, "entry_index");
-      this.encodingContext_.processIndexedHeader(index);
+      index = this.encodingContext_.processIndexedHeader(index);
+      if (index == -1) break;
       if (!this.encodingContext_.isReferenced(index)) {
         break;
       }

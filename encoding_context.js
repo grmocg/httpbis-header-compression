@@ -235,14 +235,14 @@ HeaderTable.prototype.equals = function(other) {
   return true;
 };
 
-HeaderTable.prototype.getEntry = function(index) {
+HeaderTable.prototype.getEntry = function(index, allow_static_table) {
   if (index < 0) {
     throw new Error('Invalid index ' + index);
   }
   if (index < this.entries_.length) {
     return this.entries_[index];
   }
-  if (USE_STATIC_TABLE) {
+  if (USE_STATIC_TABLE && allow_static_table) {
     var static_index = index - this.entries_.length;
     if (static_index < STATIC_HEADER_TABLE.length) {
       var static_entry = STATIC_HEADER_TABLE[static_index];
@@ -392,7 +392,7 @@ EncodingContext.prototype.clearTouches = function(index) {
 };
 
 EncodingContext.prototype.getIndexedHeaderName = function(index) {
-  return this.headerTable_.getEntry(index).name;
+  return this.headerTable_.getEntry(index, 1).name;
 };
 
 EncodingContext.prototype.getIndexedHeaderValue = function(index) {
@@ -416,6 +416,14 @@ EncodingContext.prototype.forEachEntry = function(fn) {
 
 EncodingContext.prototype.processIndexedHeader = function(index) {
 // This follows the process described in 3.2.1.
+  if (index >= this.headerTable_.entries_.length) {
+    var static_entry = this.headerTable_.getEntry(index, 1);
+    index = this.headerTable_.tryAppendEntry(static_entry.name,
+                                             static_entry.value);
+    if (index == -1) {
+      return index;
+    }
+  }
   var entry = this.headerTable_.getEntry(index);
   //console.log("referenced:", index, this.headerTable_.getEntry(index));
   if (entry.isReferenced()) {
@@ -423,6 +431,7 @@ EncodingContext.prototype.processIndexedHeader = function(index) {
   } else {
     entry.setReferenced();
   }
+  return index;
 };
 
 // Returns the index of the new entry if the header was successfully
